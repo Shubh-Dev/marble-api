@@ -1,6 +1,8 @@
+import dotenv from "dotenv";
 import express from "express";
 import userRoutes from "./src/routes/userRoutes.js";
-import { testConnection } from "./src/config/database.js";
+
+dotenv.config();
 
 const app = express();
 
@@ -12,7 +14,8 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
+console.log("PORT", PORT);
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-    testConnection();
 });

@@ -1,5 +1,7 @@
+import dotenv from 'dotenv';
 import pgPromise from 'pg-promise';
 
+dotenv.config();
 const pgp = pgPromise({});
 
 const connection = {
@@ -10,20 +12,7 @@ const connection = {
     password: process.env.DB_PASSWORD
 };
 
-console.log("from db file",process.env.DB_PASSWORD);
-console.log("from db file",process.env.DB_USER);
 const db = pgp(connection); 
 
-const testConnection = async () => {
-    try {
-        await db.connect();
-        console.log('Connected to database');
-    } catch (error) {
-        console.log('Error connecting to database');
-        console.log(error);
-    } finally {
-        db.$pool.end();
-    }
-}
 
-export { db, testConnection };
+export default db;
