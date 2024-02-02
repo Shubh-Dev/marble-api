@@ -6,6 +6,8 @@ dotenv.config();
  */
 
 export default {
+
+  development: {
     client: "pg",
     connection: {
       host: "127.0.0.1",
@@ -20,8 +22,5 @@ export default {
     seeds: {
       directory: "./src/database/seeds",
     },
+  },
 };
-
-console.log(process.env.DB_USER);
-console.log(process.env.DB_PASSWORD);
-console.log(process.env.DB_NAME);

@@ -2,14 +2,14 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
+
+console.log("create_products_table start");
 export const up = async (knex) => {
-  await knex.schema.createTable("users", (table) => {
+  await knex.schema.createTable("products", (table) => {
     table.increments("id").primary();
     table.string("name").notNullable();
-    table.string("password").notNullable();
-    table.string("email").notNullable().unique();
-    table.string("contact");
-    table.boolean("is_admin").defaultTo(false);
+    table.decimal("price", 10, 2).notNullable();
+    table.text("description");
     table.timestamps(true, true);
   });
 };
@@ -19,7 +19,7 @@ export const up = async (knex) => {
  * @returns { Promise<void> }
  */
 export const down = async (knex) => {
-  await knex.schema.dropTable("users");
+  await knex.schema.dropTable("products");
 };
 
-console.log("20240202062013_create_users_table.mjs has been executed");
+console.log("create_products_table end");
