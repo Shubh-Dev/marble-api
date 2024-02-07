@@ -13,7 +13,7 @@ export const up = async (knex) => {
     table.integer("current_salary").nullable();
     table.text("github_link").nullable();
     table.text("linkedin_link").nullable();
-    table.binary("resume").nullable();
+    table.text("resume").nullable();
     table.text("notes").nullable();
     table.timestamps(true, true);
 
