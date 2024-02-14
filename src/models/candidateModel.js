@@ -1,4 +1,21 @@
 import db from "../config/database.js";
+import { Dropbox } from "dropbox";
+
+const accessToken = process.env.DROPBOX_ACCESS_TOKEN;
+
+const dbx = new Dropbox({ accessToken, fetch });
+
+const insertIntoDropbox = async (file) => {
+  try {
+    const response = await dbx.filesUpload({
+      path: `/${file.originalname}`,
+      contents: file.buffer,
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const getCandidateById = async (candidateID) => {
   try {
@@ -19,6 +36,16 @@ const getAllCandidates = async () => {
 };
 
 const createCandidate = async (candidate) => {
+  if (candidate.resume) {
+    const file = candidate.resume;
+    try {
+      const response = await insertIntoDropbox(file);
+      candidate.resume = response.result.path_display;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   try {
     return await db.one(
       "INSERT INTO candidates (name, email, phone_no, years_of_experience, skills, current_salary, github_link, linkedin_link, resume, notes ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
