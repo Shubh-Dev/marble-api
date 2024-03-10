@@ -27,19 +27,11 @@ const getAllCandidatesController = async (req, res) => {
 
 const createCandidateController = async (req, res) => {
   const candidate = req.body;
-  // if (candidate.skills) {
-  //   try {
-  //     candidate.skills = JSON.parse(candidate.skills);
-  //   } catch (err) {
-  //     console.error("Error Parsing skills as JSON", err);
-  //     res.status(400).json({ message: "Invalid JSON format for skills" });
-  //     return;
-  //   }
-  // }
+
   try {
     const newCandidate = await createCandidate(candidate);
-    console.log("New Candidate", newCandidate);
-    // res.json(newCandidate);
+    console.log("newCandidate", newCandidate);
+    res.status(201).json(newCandidate);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal Server Error" });
