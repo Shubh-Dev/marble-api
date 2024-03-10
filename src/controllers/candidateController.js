@@ -31,7 +31,6 @@ const createCandidateController = async (req, res) => {
   try {
     const newCandidate = await createCandidate(candidate);
     console.log("newCandidate", newCandidate);
-    console.log("candidate resume", newCandidate.resume);
     res.status(201).json(newCandidate);
   } catch (err) {
     console.error(err);

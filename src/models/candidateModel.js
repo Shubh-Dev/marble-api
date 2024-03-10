@@ -36,21 +36,21 @@ const getAllCandidates = async () => {
 };
 
 const createCandidate = async (candidate) => {
-  if (candidate.resume) {
-    const file = candidate.resume;
-    try {
-      const response = await insertIntoDropbox(file);
-      if (response.result) {
-        console.log("resume response line 44", response);
-        candidate.resume = response.result.path_display;
-      } else {
-        throw new Error("Error inserting into Dropbox");
-      }
-    } catch (error) {
-      console.error("Error inserting into Dropbox", error);
-      throw error;
-    }
-  }
+  // if (candidate.resume) {
+  //   const file = candidate.resume;
+  //   try {
+  //     const response = await insertIntoDropbox(file);
+  //     if (response.result) {
+  //       console.log("resume response line 44", response);
+  //       candidate.resume = response.result.path_display;
+  //     } else {
+  //       throw new Error("Error inserting into Dropbox");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error inserting into Dropbox", error);
+  //     throw error;
+  //   }
+  // }
 
   return new Promise(async (resolve, reject) => {
     try {
