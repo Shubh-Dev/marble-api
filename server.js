@@ -1,33 +1,38 @@
 import express from "express";
 import SuperTokens from "supertokens-node";
-import Multitenancy from "supertokens-node/recipe/multitenancy/index.js";
+import Session from "supertokens-node/recipe/session/index.js";
+import { middleware } from "supertokens-node/framework/express/index.js";
 import { verifySession } from "supertokens-node/recipe/session/framework/express/index.js";
-import {
-  middleware,
-  errorHandler,
-} from "supertokens-node/framework/express/index.js";
+import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword/index.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
+const PORT = 3000;
 SuperTokens.init({
+  framework: "express",
   supertokens: {
-    connectionURI: "https://try.supertokens.io",
+    connectionURI: "https://try.supertokens.com",
   },
   appInfo: {
-    appName: "SuperTokens",
+    appName: "marble api",
     apiDomain: "http://localhost:3000",
     websiteDomain: "http://localhost:3000",
+    apiBasePath: "/",
+    websiteBasePath: "/",
   },
-  recipeList: [Multitenancy.init()],
+
+  recipeList: [ThirdPartyEmailPassword.init({}), Session.init({})],
 });
 
-console.log("verifySession", verifySession);
 app.use(middleware());
 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
 app.get("/sessioninfo", verifySession(), async (req, res) => {
+  console.log("session", req.session);
   try {
-    if (req.session) {
+    if (req.session && req.session.isAuthenticated()) {
       let session = req.session;
       res.send({
         sessionHandle: session.getHandle(),
@@ -40,10 +45,6 @@ app.get("/sessioninfo", verifySession(), async (req, res) => {
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
-});
-
-app.get("/", (req, res) => {
-  res.send("Hello, this is the root route!");
 });
 
 app.listen(PORT, () => {

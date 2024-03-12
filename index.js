@@ -1,23 +1,18 @@
 import dotenv from "dotenv";
-import express, { response } from "express";
+import express from "express";
 import bodyParser from "body-parser";
 import userRoutes from "./src/routes/userRoutes.js";
 import candidateRoutes from "./src/routes/candidateRoutes.js";
 import cors from "cors";
-import supertokens from "supertokens-node";
-// import { middleware, errorHandler, SessionRequest } from "supertokens-node/lib/build/framework/express/framework.js";
-import {
-  middleware,
-  errorHandler,
-  SessionRequest,
-} from "supertokens-node/framework/express";
-// import { getWebsiteDomain, SuperTokensConfig } from "./src/config/supertokensConfig.js";
-import { getWebsiteDomain, SuperTokensConfig } from "./config";
+import SuperTokens from "supertokens-node";
+import Session from "supertokens-node/recipe/session/index.js";
+import { middleware } from "supertokens-node/framework/express/index.js";
+import { verifySession } from "supertokens-node/recipe/session/framework/express/index.js";
+
 // import { Dropbox } from "dropbox";
 
 dotenv.config();
 const accessToken = process.env.DROPBOX_ACCESS_TOKEN;
-
 
 // const dbx = new Dropbox({ accessToken, fetch });
 // let directLink = "";
@@ -46,29 +41,33 @@ const accessToken = process.env.DROPBOX_ACCESS_TOKEN;
 //   }
 // };
 
-supertokens.init(SuperTokensConfig);
 const app = express();
-app.use(cors({
-  origin: getWebsiteDomain(),
-  allowedHeaders: ["Content-Type", ...supertokens.getAllCORSHeaders()],
-  methods: ["GET", "POST", "DELETE", "PUT"],
-  credentials: true,
-}));
+
 app.use(bodyParser.json());
-app.use(middleware);
 
-//  for testing
-app.get("/sessioninfo", verifySession(), async (req, res) => {
-  let session = req.session;
-  req.send({
-    sessionHandle: session.getHandle(),
-    userId: session.getUserId(),
-    accessTokenPayload: session.getAccessTokenPayload(),
-  });
-  })
+SuperTokens.init({
+  framework: "express",
+  supertokens: {
+    connectionURI: "https://try.supertokens.com",
+  },
+  appInfo: {
+    appName: "marble api",
+    apiDomain: "http://localhost:3000",
+    websiteDomain: "http://localhost:3000",
+    apiBasePath: "/",
+    websiteBasePath: "/",
+  },
 
+  recipeList: [
+    Session.init({
+      // antiCsrf: "VIA_TOKEN",
+    }),
+  ],
+});
 
-// want to implement supertokens here
+app.use(middleware());
+console.log(verifySession);
+
 app.use("/users", userRoutes);
 app.use("/candidates", verifySession(), candidateRoutes);
 
@@ -78,9 +77,6 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 // getDropboxDirectLink();
-
-console.log("PORT", PORT);
-app.use(errorHandler());
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
