@@ -9,6 +9,17 @@ const getUserById = async (userId) => {
   }
 };
 
+const getUserByEmailId = async (email) => {
+  try {
+    const user = await db.oneOrNone("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+    return user ? id : null;
+  } catch (err) {
+    throw err;
+  }
+};
+
 const getAllUsers = async () => {
   try {
     return await db.manyOrNone("SELECT * FROM users");
@@ -18,7 +29,7 @@ const getAllUsers = async () => {
 };
 
 const createUser = async (user) => {
-    console.log("createUser method", user);
+  console.log("createUser method", user);
   try {
     return await db.one(
       "INSERT INTO users (name, password, email, contact, is_admin) VALUES ($1, $2, $3, $4, $5) RETURNING *",
@@ -29,4 +40,4 @@ const createUser = async (user) => {
   }
 };
 
-export { getUserById, createUser, getAllUsers };
+export { getUserById, createUser, getAllUsers, getUserByEmailId };

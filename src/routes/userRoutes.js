@@ -3,12 +3,14 @@ import {
   getUserByIdController,
   getAllUsersController,
   createUserController,
+  loginUserController,
 } from "../controllers/userController.js";
 
 const userRoutes = express.Router();
 
 userRoutes.get("/:id", getUserByIdController);
 userRoutes.get("/", getAllUsersController);
-userRoutes.post("/", createUserController);
+userRoutes.post("/register", createUserController);
+userRoutes.post("/login", loginUserController)
 
 export default userRoutes;

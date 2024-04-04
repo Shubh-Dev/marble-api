@@ -44,6 +44,7 @@ const accessToken = process.env.DROPBOX_ACCESS_TOKEN;
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 SuperTokens.init({
   framework: "express",
