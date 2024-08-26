@@ -1,10 +1,14 @@
 import dotenv from "dotenv";
-import express, { response } from "express";
+import express from "express";
 import bodyParser from "body-parser";
 import userRoutes from "./src/routes/userRoutes.js";
 import candidateRoutes from "./src/routes/candidateRoutes.js";
 import cors from "cors";
 import SuperTokens from "supertokens-node";
+import Session from "supertokens-node/recipe/session/index.js";
+import { middleware } from "supertokens-node/framework/express/index.js";
+import { verifySession } from "supertokens-node/recipe/session/framework/express/index.js";
+
 // import { Dropbox } from "dropbox";
 
 dotenv.config();
@@ -38,11 +42,35 @@ const accessToken = process.env.DROPBOX_ACCESS_TOKEN;
 // };
 
 const app = express();
-app.use(cors());
+
 app.use(bodyParser.json());
+app.use(cors());
+
+SuperTokens.init({
+  framework: "express",
+  supertokens: {
+    connectionURI: "https://try.supertokens.com",
+  },
+  appInfo: {
+    appName: "marble api",
+    apiDomain: "http://localhost:3000",
+    websiteDomain: "http://localhost:3000",
+    apiBasePath: "/",
+    websiteBasePath: "/",
+  },
+
+  recipeList: [
+    Session.init({
+      // antiCsrf: "VIA_TOKEN",
+    }),
+  ],
+});
+
+app.use(middleware());
+console.log(verifySession);
 
 app.use("/users", userRoutes);
-app.use("/candidates", candidateRoutes);
+app.use("/candidates", verifySession(), candidateRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello, this is the root route!");
@@ -50,8 +78,6 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 // getDropboxDirectLink();
-
-console.log("PORT", PORT);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
